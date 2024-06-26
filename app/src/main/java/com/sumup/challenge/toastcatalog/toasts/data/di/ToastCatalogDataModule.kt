@@ -2,8 +2,6 @@ package com.sumup.challenge.toastcatalog.toasts.data.di
 
 import com.sumup.challenge.toastcatalog.toasts.data.ToastCatalogRepositoryImpl
 import com.sumup.challenge.toastcatalog.toasts.data.api.ToastCatalogApiServices
-import com.sumup.challenge.toastcatalog.toasts.data.datasource.FetchToastCatalogRemoteDataSource
-import com.sumup.challenge.toastcatalog.toasts.data.datasource.FetchToastCatalogRemoteDatasourceImpl
 import com.sumup.challenge.toastcatalog.toasts.data.model.ToastCatalogResponse
 import com.sumup.challenge.toastcatalog.common.Mapper
 import dagger.Binds
@@ -38,11 +36,6 @@ internal interface ToastCatalogDataModule {
     fun bindsToastCatalogRepository(
         repository: ToastCatalogRepositoryImpl
     ): ToastCatalogRepository
-
-    @Binds
-    fun bindsFetchToastCatalogRemoteDataSource(
-        fetchCatalogRemoteDatasourceImpl: FetchToastCatalogRemoteDatasourceImpl
-    ): FetchToastCatalogRemoteDataSource
 
     /**
      * binds mapper that map toasts response received from APT to toast (Domain/Business model)

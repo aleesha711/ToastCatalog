@@ -9,7 +9,6 @@ import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test
-import com.sumup.challenge.toastcatalog.common.Result
 import io.mockk.clearAllMocks
 import kotlinx.coroutines.flow.first
 import org.junit.After

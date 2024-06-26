@@ -2,7 +2,6 @@ package com.sumup.challenge.toastcatalog.toasts.presentation
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import com.TestUtils
-import com.sumup.challenge.toastcatalog.common.UIState
 import com.sumup.challenge.toastcatalog.toasts.domain.usecase.FetchToastCatalogUseCaseImpl
 import io.mockk.coEvery
 import io.mockk.coVerify
@@ -12,7 +11,6 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.test.runTest
 import org.junit.Before
 import org.junit.Test
-import com.sumup.challenge.toastcatalog.common.Result
 import com.sumup.challenge.toastcatalog.toasts.presentation.mapper.toToastUiModelList
 import io.mockk.unmockkAll
 import kotlinx.coroutines.Dispatchers
