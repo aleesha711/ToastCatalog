@@ -11,6 +11,7 @@ import org.junit.Assert.assertTrue
 import org.junit.Test
 import io.mockk.clearAllMocks
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.single
 import org.junit.After
 import org.junit.Before
 import java.io.IOException
@@ -37,14 +38,9 @@ class FetchToastCatalogUseCaseImplTest {
             emit(TestUtils.getToasts())
         }
 
-        // Invoke the use case and get the single result
+        // Invoke the use case and get the first emitted result
         val result = useCase.invoke().first()
 
-        // Verify that the result is Success
-     //   assertTrue(result is Result.Success)
-
-        val successResult = result
-
-        assertEquals(TestUtils.getToasts(), successResult)
+        assertEquals(TestUtils.getToasts(), result)
     }
 }
