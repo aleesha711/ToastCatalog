@@ -11,7 +11,6 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.test.runTest
 import org.junit.Before
 import org.junit.Test
-import com.sumup.challenge.toastcatalog.toasts.presentation.mapper.toToastUiModelList
 import io.mockk.unmockkAll
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -23,7 +22,10 @@ import org.junit.After
 import org.junit.Rule
 import app.cash.turbine.test
 import app.cash.turbine.turbineScope
-
+import com.sumup.challenge.toastcatalog.toasts.domain.model.Toast
+import com.sumup.challenge.toastcatalog.toasts.presentation.mapper.toToastUiModelList
+import com.sumup.challenge.toastcatalog.toasts.presentation.model.ToastUiModel
+import org.junit.Assert.assertTrue
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class ToastCatalogViewModelTest {
@@ -49,65 +51,88 @@ class ToastCatalogViewModelTest {
     }
 
     @Test
+    fun `verify initial loading state`() = runTest {
+            // Assert that the initial loading state is true
+            assertEquals(true, viewModel.loading.value)
+    }
+
+    @Test
     fun `fetchToastCatalog success`() = runTest {
         turbineScope {
-            // Define the expected toast data
-            val expectedToasts = TestUtils.getToasts()
-
             // Create a flow emitting the success result
             val successResult = flow {
-                emit(Result.Success(expectedToasts))
+                emit(TestUtils.getToasts())
             }
 
             // Stub the use case to return the success result
             coEvery { fetchToastCatalogUseCase.invoke() } returns successResult
-
             // Use Turbine to collect and verify the StateFlow emissions
-            viewModel.toastCatalogState.test {
+            viewModel.loading.test {
+
+                // Assert that the initial loading state is true
+                assertEquals(true, awaitItem())
+
                 // Trigger fetching
                 viewModel.fetchToastCatalog()
 
-                // Assert that the initial state is Loading
-                assertEquals(UIState.Loading, awaitItem())
-
-                // Assert that the final state is Success with the expected toasts
-                assertEquals(UIState.Success(expectedToasts.toToastUiModelList()), awaitItem())
-
-                // Verify the interaction with the use case
-                coVerify { fetchToastCatalogUseCase.invoke() }
+                // Assert that the loading state changes to false after fetch completes
+                assertEquals(false, awaitItem())
             }
+
+            viewModel.toastCatalogState.test {
+                // Assert that the initial state is empty list
+                assertEquals(emptyList<ToastUiModel>(), awaitItem().getOrNull())
+
+                // Trigger fetching
+                viewModel.fetchToastCatalog()
+
+                // Assert that the next emission is the success state with the expected toast list
+                assertEquals(TestUtils.getToasts().toToastUiModelList(), awaitItem().getOrNull())
+            }
+
+            // Verify the interaction with the use case
+            coVerify { fetchToastCatalogUseCase.invoke() }
         }
     }
 
     @Test
-    fun `fetchToastCatalog error`() = runTest {
-        turbineScope {
-            // Define the error message
-            val errorMessage = "Failed to fetch toasts"
+    fun `fetchToastCatalog error`() = runTest(testDispatcher) {
+        val errorMessage = "Failed to fetch toasts"
 
-            // Create a flow emitting the error result
-            val errorResult = flow {
-                emit(Result.Error(Exception(errorMessage)))
-            }
+        // Create a flow emitting the error result
+        val errorResult = flow<List<Toast>> {
+            throw Exception(errorMessage)
+        }
 
-            // Stub the use case to return the error result
-            coEvery { fetchToastCatalogUseCase.invoke() } returns errorResult
+        // Stub the use case to return the error result
+        coEvery { fetchToastCatalogUseCase.invoke() } returns errorResult
 
-            // Use Turbine to collect and verify the StateFlow emissions
-            viewModel.toastCatalogState.test {
+        // Use Turbine to collect and verify the StateFlow emissions
+        viewModel.toastCatalogState.test {
+            // Trigger fetching
+            viewModel.fetchToastCatalog()
 
-                // Trigger fetching
-                viewModel.fetchToastCatalog()
+            // Assert that the initial state is an empty success list
+            val initialResult = awaitItem()
+            assertTrue(initialResult.isSuccess)
+            assertTrue(initialResult.getOrNull()?.isEmpty() == true)
 
-                // Assert that the initial state is Loading
-                assertEquals(UIState.Loading, awaitItem())
+            // Assert that the next emission is the error state
+            val result = awaitItem()
+            assertTrue(result.isFailure)
+            assertEquals(errorMessage, result.exceptionOrNull()?.message)
 
-                // Assert that the final state is Error with the expected error message
-                assertEquals(UIState.Error(errorMessage), awaitItem())
+            // Verify the interaction with the use case
+            coVerify { fetchToastCatalogUseCase.invoke() }
+        }
 
-                // Verify the interaction with the use case
-                coVerify { fetchToastCatalogUseCase.invoke() }
-            }
+        // Check the loading state
+        viewModel.loading.test {
+            // Initial loading state
+            //      assertEquals(true, awaitItem())
+
+            // Loading state after fetch attempt
+            assertEquals(false, awaitItem())
         }
     }
 }

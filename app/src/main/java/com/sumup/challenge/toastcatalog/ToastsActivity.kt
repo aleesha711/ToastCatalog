@@ -5,14 +5,14 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import com.sumup.challenge.toastcatalog.toasts.presentation.ToastCatalogScreen
 import dagger.hilt.android.AndroidEntryPoint
-import com.sumup.challenge.toastcatalog.designsystem.theme.SpaceflightNewsTheme
+import com.sumup.challenge.toastcatalog.designsystem.theme.ToastCatalogTheme
 
 @AndroidEntryPoint
 class ToastsActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            SpaceflightNewsTheme {
+            ToastCatalogTheme {
                 ToastCatalogScreen()
             }
         }

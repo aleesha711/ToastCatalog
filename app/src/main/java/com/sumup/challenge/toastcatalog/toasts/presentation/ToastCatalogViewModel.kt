@@ -36,9 +36,9 @@ class ToastCatalogViewModel @Inject constructor(
         .stateIn(viewModelScope, SharingStarted.Lazily, Result.success(emptyList()))
 
     init {
-        fetchToastCatalog()
+       // fetchToastCatalog()
     }
-    private fun fetchToastCatalog() {
+     fun fetchToastCatalog() {
         viewModelScope.launch {
             try {
                 fetchToastCatalogUseCase.invoke().collect { toasts ->

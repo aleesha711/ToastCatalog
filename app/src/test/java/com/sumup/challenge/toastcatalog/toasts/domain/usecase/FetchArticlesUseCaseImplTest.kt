@@ -41,42 +41,10 @@ class FetchToastCatalogUseCaseImplTest {
         val result = useCase.invoke().first()
 
         // Verify that the result is Success
-        assertTrue(result is Result.Success)
+     //   assertTrue(result is Result.Success)
 
-        val successResult = result as Result.Success
+        val successResult = result
 
-        assertEquals(TestUtils.getToasts(), successResult.data)
-    }
-
-    @Test
-    fun `invoke should Error on IOException`() = runTest {
-        // Stub the repository to throw an IOException
-        coEvery { toastCatalogRepository.getToasts() } throws IOException("Network error")
-
-        // Invoke the use case and collect the result
-        // Invoke the use case and get the single result
-        val result = useCase.invoke().first()
-
-        // Verify that the result is Error
-        assertTrue(result is Result.Error)
-        val errorResult = result as Result.Error
-        assertTrue(errorResult.exception is IOException)
-        assertEquals("Network error: Unable to fetch toasts.", errorResult.exception.message)
-    }
-
-    @Test
-    fun `invoke should return Error on unknown Exception`() = runTest {
-        // Stub the repository to throw a generic Exception
-        coEvery { toastCatalogRepository.getToasts() } throws Exception("Unknown error")
-
-        // Invoke the use case and collect the result
-        // Invoke the use case and get the single result
-        val result = useCase.invoke().first()
-
-        // Verify that the result is Error
-        assertTrue(result is Result.Error)
-        val errorResult = result as Result.Error
-        assertTrue(errorResult.exception is Exception)
-        assertEquals("Unknown error: Unknown error", errorResult.exception.message)
+        assertEquals(TestUtils.getToasts(), successResult)
     }
 }

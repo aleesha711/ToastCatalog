@@ -25,8 +25,8 @@ internal class ToastCatalogRepositoryImpl @Inject constructor(
         emit(mapper.map(response))
     }.catch { e ->
         when (e) {
-            is IOException -> throw IOException("Network error: Unable to fetch toasts.", e)
-            else -> throw Exception("Unknown error: ${e.message}", e)
+            is IOException -> throw IOException("Network error: Unable to fetch toasts", e)
+            else -> throw Exception("${e.message}", e)
         }
     }.flowOn(Dispatchers.IO)
 }
