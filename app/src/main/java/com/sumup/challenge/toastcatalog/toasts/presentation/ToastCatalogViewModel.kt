@@ -34,10 +34,6 @@ class ToastCatalogViewModel @Inject constructor(
     // Lazily initialize the StateFlow using stateIn so it won't start emitting values until a collector starts observing it.
     val toastCatalogState: StateFlow<Result<List<ToastUiModel>>> = _toastCatalogState
         .stateIn(viewModelScope, SharingStarted.Lazily, Result.success(emptyList()))
-
-    init {
-       // fetchToastCatalog()
-    }
      fun fetchToastCatalog() {
         viewModelScope.launch {
             try {
